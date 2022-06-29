@@ -185,7 +185,7 @@ class Cephalometric(data.Dataset):
         temp = cc_augment(torch.cat([crop_imgs, temp], 0))
         crop_imgs = temp[:3]
         temp = temp[3]
-        chosen_y, chosen_x = temp.argmax() // patch_size, temp.argmax() % patch_size
+        chosen_y, chosen_x = torch.div(temp.argmax(), patch_size, rounding_mode='trunc'), temp.argmax() % patch_size
         if self.ret_name:
             return item['image'], crop_imgs, chosen_y, chosen_x, raw_y, raw_x, item['ID']
         return item['image'], crop_imgs, chosen_y, chosen_x, raw_y, raw_x

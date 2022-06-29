@@ -14,7 +14,7 @@ from torch.optim.lr_scheduler import StepLR
 from torch import optim
 from models.network import UNet_Pretrained
 from datasets.ceph import Cephalometric
-from .test import Tester
+from scripts.test import Tester
 from PIL import Image
 import numpy as np
 
@@ -101,12 +101,12 @@ if __name__ == "__main__":
     if args.pretrain is not None and args.pretrain != "":
         print("Pretrain emb-16 289")
         epoch = 289
-        ckpt = "/data/quanquan/oneshot/runs2/" + "emb-16" + f"/model_epoch_{epoch}.pth"
+        ckpt = "/home/bian/project/Oneshot_landmark_detection/oneShot/runs/" + "emb-16" + f"/model_epoch_{epoch}.pth"
         assert os.path.exists(ckpt)
         logger.info(f'Load CKPT {ckpt}')
         ckpt = torch.load(ckpt)
         net.load_state_dict(ckpt)
-        ckpt2 = "/data/quanquan/oneshot/runs2/" + "emb-16" + f"/model_patch_epoch_{epoch}.pth"
+        ckpt2 = "/home/bian/project/Oneshot_landmark_detection/oneShot/runs/" + "emb-16" + f"/model_patch_epoch_{epoch}.pth"
         assert os.path.exists(ckpt2)
         ckpt2 = torch.load(ckpt2)
         net_patch.load_state_dict(ckpt2)
@@ -167,8 +167,8 @@ if __name__ == "__main__":
                 raw_fea_list = net(raw_img)
                 crop_fea_list = net_patch(crop_imgs)
 
-                gt_y, gt_x = raw_y // (2 ** 5), raw_x // (2 ** 5)
-                tmpl_y, tmpl_x = chosen_y // (2 ** 5), chosen_x // (2 ** 5)
+                gt_y, gt_x = torch.div(raw_y, (2 ** 5), rounding_mode='trunc'), torch.div(raw_x, (2 ** 5),rounding_mode='trunc')
+                tmpl_y, tmpl_x = torch.div(chosen_y, (2 ** 5),rounding_mode='trunc'), torch.div(chosen_x, (2 ** 5),rounding_mode='trunc')
                 
                 tmpl_feature = torch.stack([crop_fea_list[0][[id], :, tmpl_y[id], tmpl_x[id]] \
                                             for id in range(gt_y.shape[0])]).squeeze()
@@ -176,29 +176,29 @@ if __name__ == "__main__":
 
                 loss_5 = ce_loss(ret_inner_5, gt_y, gt_x)
 
-                gt_y, gt_x = raw_y // (2 ** 4), raw_x // (2 ** 4)
-                tmpl_y, tmpl_x = chosen_y // (2 ** 4), chosen_x // (2 ** 4)
+                gt_y, gt_x = torch.div(raw_y, (2 ** 4),rounding_mode='trunc'), torch.div(raw_x, (2 ** 4),rounding_mode='trunc')
+                tmpl_y, tmpl_x = torch.div(chosen_y, (2 ** 4),rounding_mode='trunc'), torch.div(chosen_x, (2 ** 4),rounding_mode='trunc')
                 tmpl_feature = torch.stack([crop_fea_list[1][[id], :, tmpl_y[id], tmpl_x[id]] \
                                             for id in range(gt_y.shape[0])]).squeeze()
                 ret_inner_4 = match_inner_product(raw_fea_list[1], tmpl_feature)
                 loss_4 = ce_loss(ret_inner_4, gt_y, gt_x, nearby=config['training']['nearby'])
 
-                gt_y, gt_x = raw_y // (2 ** 3), raw_x // (2 ** 3)
-                tmpl_y, tmpl_x = chosen_y // (2 ** 3), chosen_x // (2 ** 3)
+                gt_y, gt_x = torch.div(raw_y, (2 ** 3),rounding_mode='trunc'), torch.div(raw_x, (2 ** 3),rounding_mode='trunc')
+                tmpl_y, tmpl_x = torch.div(chosen_y, (2 ** 3),rounding_mode='trunc'), torch.div(chosen_x, (2 ** 3),rounding_mode='trunc')
                 tmpl_feature = torch.stack([crop_fea_list[2][[id], :, tmpl_y[id], tmpl_x[id]] \
                                             for id in range(gt_y.shape[0])]).squeeze()
                 ret_inner_3 = match_inner_product(raw_fea_list[2], tmpl_feature)
                 loss_3 = ce_loss(ret_inner_3, gt_y, gt_x, nearby=config['training']['nearby'])
 
-                gt_y, gt_x = raw_y // (2 ** 2), raw_x // (2 ** 2)
-                tmpl_y, tmpl_x = chosen_y // (2 ** 2), chosen_x // (2 ** 2)
+                gt_y, gt_x = torch.div(raw_y, (2 ** 2),rounding_mode='trunc'), torch.div(raw_x, (2 ** 2),rounding_mode='trunc')
+                tmpl_y, tmpl_x = torch.div(chosen_y, (2 ** 2),rounding_mode='trunc'), torch.div(chosen_x, (2 ** 2),rounding_mode='trunc')
                 tmpl_feature = torch.stack([crop_fea_list[3][[id], :, tmpl_y[id], tmpl_x[id]] \
                                             for id in range(gt_y.shape[0])]).squeeze()
                 ret_inner_2 = match_inner_product(raw_fea_list[3], tmpl_feature)
                 loss_2 = ce_loss(ret_inner_2, gt_y, gt_x, nearby=config['training']['nearby'])
 
-                gt_y, gt_x = raw_y // (2 ** 1), raw_x // (2 ** 1)
-                tmpl_y, tmpl_x = chosen_y // (2 ** 1), chosen_x // (2 ** 1)
+                gt_y, gt_x = torch.div(raw_y, (2 ** 1),rounding_mode='trunc'), torch.div(raw_x, (2 ** 1),rounding_mode='trunc')
+                tmpl_y, tmpl_x = torch.div(chosen_y, (2 ** 1),rounding_mode='trunc'), torch.div(chosen_x, (2 ** 1),rounding_mode='trunc')
                 tmpl_feature = torch.stack([crop_fea_list[4][[id], :, tmpl_y[id], tmpl_x[id]] \
                                             for id in range(gt_y.shape[0])]).squeeze()
                 ret_inner_1 = match_inner_product(raw_fea_list[4], tmpl_feature)
