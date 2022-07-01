@@ -14,6 +14,8 @@ class UNet_Pretrained(nn.Module):
         self.n_channels = n_channels
         bilinear = True
         length_embedding = emb_len
+        print("DEBUG setting: n_channels = ", n_channels)
+        print("DEBUG setting: non_local = ", non_local)
         print("DEBUG setting: emb_len = ", emb_len)
 
         # self.vgg =  VGG(pretrained=True)
@@ -88,8 +90,8 @@ class Up(nn.Module):
             diffY = torch.tensor([x2.size()[2] - x1.size()[2]])
             diffX = torch.tensor([x2.size()[3] - x1.size()[3]])
 
-            x1 = F.pad(x1, [diffX // 2, diffX - diffX // 2,
-                            diffY // 2, diffY - diffY // 2])
+            x1 = F.pad(x1, [torch.div(diffX, 2, rounding_mode='trunc') , torch.div(diffX - diffX, 2, rounding_mode='trunc'),
+                            torch.div(diffY, 2, rounding_mode='trunc') , torch.div(diffY - diffY, 2, rounding_mode='trunc')])
             # if you have padding issues, see
             # https://github.com/HaiyongJiang/U-Net-Pytorch-Unstructured-Buggy/commit/0e854509c2cea854e247a9c615f175f76fbb2e3a
             # https://github.com/xiaopeng-liao/Pytorch-UNet/commit/8ebac70e633bac59fc22bb5195e513d5832fb3bd
@@ -252,6 +254,8 @@ class NonLocalBlock(nn.Module):
 if __name__ == '__main__':
     test = UNet_Pretrained(3, 57)
     wtf = torch.zeros([1, 3, 224, 224], dtype=torch.float)
+    print(test)
     wtf = test(wtf)
-    import ipdb; ipdb.set_trace()
+    print(wtf)
+    #import ipdb; ipdb.set_trace()
 
