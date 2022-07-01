@@ -90,7 +90,8 @@ if __name__ == "__main__":
     # Tester
     tester = Tester(logger, config, tag=args.tag)
 
-    dataset = Cephalometric(config['dataset']['pth'], 'Train', patch_size=32*8, retfunc=1, use_prob=False)
+    #dataset = Cephalometric(config['dataset']['pth'], 'Train', patch_size=32*8, retfunc=1, use_prob=False)
+    dataset = Cephalometric(config['dataset']['pth'], 'Train', patch_size = config['training']['patch_size'],retfunc=1, use_prob=False)
     dataloader = DataLoader(dataset, batch_size=config['training']['batch_size'],
                             drop_last=True, shuffle=True, num_workers=config['training']['num_workers'])
 
@@ -160,6 +161,7 @@ if __name__ == "__main__":
         net_patch.train()
         logic_loss_list = list()
         for index, (raw_img, crop_imgs, chosen_y, chosen_x, raw_y, raw_x) in enumerate(dataloader):
+            #上下文管理器，用于打开或关闭 autograd 引擎的异常检测
             with torch.autograd.set_detect_anomaly(False):
                 raw_img = raw_img.cuda()
                 crop_imgs = crop_imgs.cuda()
