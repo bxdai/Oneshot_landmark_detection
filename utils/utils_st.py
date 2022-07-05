@@ -81,7 +81,7 @@ def voting(heatmap, regression_y, regression_x, Radius, get_voting=False):
     score_map = torch.zeros(n, c, h, w, dtype=torch.int16)
     spots_heat, spots = heatmap.view(n, c, -1).topk(dim=-1, \
         k=num_candi)
-    spots_y = spots // w
+    spots_y = torch.div(spots, w,rounding_mode='trunc')
     spots_x = spots % w
 
     # # for mutiprocessing debug
