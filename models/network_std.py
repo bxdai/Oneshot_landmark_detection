@@ -34,7 +34,8 @@ class UNet_Pretrained(nn.Module):
 
         x = self.final(x)
         
-        heatmap = F.sigmoid(x[:,:self.n_classes,:,:])
+        #heatmap = F.sigmoid(x[:,:self.n_classes,:,:])
+        heatmap = torch.sigmoid(x[:,:self.n_classes,:,:])
         regression_x = x[:,self.n_classes:2*self.n_classes,:,:]
         regression_y = x[:,2*self.n_classes:,:,:]
 
@@ -138,8 +139,8 @@ class Up(nn.Module):
             diffY = torch.tensor([x2.size()[2] - x1.size()[2]])
             diffX = torch.tensor([x2.size()[3] - x1.size()[3]])
 
-            x1 = F.pad(x1, [diffX // 2, diffX - diffX // 2,
-                            diffY // 2, diffY - diffY // 2])
+            x1 = F.pad(x1, [torch.div(diffX, 2, rounding_mode='trunc') , torch.div(diffX - diffX, 2, rounding_mode='trunc'),
+                            torch.div(diffY, 2, rounding_mode='trunc') , torch.div(diffY - diffY, 2, rounding_mode='trunc')])
             # if you have padding issues, see
             # https://github.com/HaiyongJiang/U-Net-Pytorch-Unstructured-Buggy/commit/0e854509c2cea854e247a9c615f175f76fbb2e3a
             # https://github.com/xiaopeng-liao/Pytorch-UNet/commit/8ebac70e633bac59fc22bb5195e513d5832fb3bd

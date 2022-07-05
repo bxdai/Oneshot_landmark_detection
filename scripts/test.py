@@ -185,12 +185,12 @@ if __name__ == "__main__":
     if args.pretrain is not None and args.pretrain != "":
         epoch = args.pepoch
         print(f"Pretrain {tag} {epoch}")
-        ckpt = "/data/quanquan/oneshot/runs-pixelpro/" + tag + f"/model_epoch_{epoch}.pth"
+        ckpt = "/home/bian/project/Oneshot_landmark_detection/oneShot/runs-pixelpro/" + tag + f"/model_epoch_{epoch}.pth"
         assert os.path.exists(ckpt)
         print(f'Load CKPT {ckpt}')
         ckpt = torch.load(ckpt)
         net.load_state_dict(ckpt)
-        ckpt2 = "/data/quanquan/oneshot/runs-pixelpro/" + tag + f"/model_patch_epoch_{epoch}.pth"
+        ckpt2 = "/home/bian/project/Oneshot_landmark_detection/oneShot/runs-pixelpro/" + tag + f"/model_patch_epoch_{epoch}.pth"
         assert os.path.exists(ckpt2)
         ckpt2 = torch.load(ckpt2)
         net_patch.load_state_dict(ckpt2)

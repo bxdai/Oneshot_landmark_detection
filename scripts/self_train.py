@@ -50,9 +50,9 @@ if __name__ == "__main__":
     # Parse command line options
     parser = argparse.ArgumentParser(description="Train Unet landmark detection network")
     parser.add_argument("--tag", default='', help="name of the run")
-    parser.add_argument("--config", default="configs/config.yaml", help="default configs")
+    parser.add_argument("--config", default="configs/config_st.yaml", help="default configs")
     parser.add_argument("--epoch", type=int, default=0, help="default configs")
-    parser.add_argument("--pseudo", type=str, default="debug")
+    parser.add_argument("--pseudo", type=str, default="S2")
     parser.add_argument("--oneshot", type=int, default=126)
     parser.add_argument('--finaltest', action='store_true')
     args = parser.parse_args()
@@ -92,12 +92,13 @@ if __name__ == "__main__":
     loss_regression_fn = L1Loss
 
     # Tester
-    tester = Tester(logger, config, test_mode=2)
+    tester = Tester(logger, config=config, test_mode=0)
 
     # Record
     best_mre = 100.0
     best_epoch = -1
 
+    #for epoch in range(1):
     for epoch in range(start_epoch, config['training']['num_epochs']):
         logic_loss_list = list()
         net.train()
@@ -139,13 +140,13 @@ if __name__ == "__main__":
         scheduler.step()
 
         # # save model
-        if epoch == -1 or (epoch + 1) % config['training']['save_seq'] == 0:
+        if epoch == -1 or (epoch+1) % config['training']['save_seq'] == 0:
             logger.info(config['training']['runs_dir'] + "/model_epoch_{}.pth".format(epoch))
             torch.save(net.state_dict(), config['training']['runs_dir'] + "/model_epoch_{}.pth".format(epoch))
 
             config['training']['last_epoch'] = epoch
             net.eval()
-            mre = tester.test(net, epoch=epoch)
+            mre = tester.test(net,epoch=epoch,dump_label=True)
             if mre < best_mre:
                 best_mre = mre
                 best_epoch = epoch
