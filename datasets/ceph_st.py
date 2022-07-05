@@ -71,14 +71,14 @@ class Cephalometric(data.Dataset):
             self.pth_Image = os.path.join(self.pth_Image, 'TrainingData')
             start = 2
             end = 2
-        # elif mode == 'Test1':
-        #     self.pth_Image = os.path.join(self.pth_Image, 'TrainingData')
-        #     start = 1
-        #     end = 150
         elif mode == 'Test1':
-            self.pth_Image = os.path.join(self.pth_Image, 'Test1Data')
-            start = 151
-            end = 170
+            self.pth_Image = os.path.join(self.pth_Image, 'TrainingData')
+            start = 1
+            end = 150
+        # elif mode == 'Test1':
+        #     self.pth_Image = os.path.join(self.pth_Image, 'Test1Data')
+        #     start = 151
+        #     end = 170
         elif mode == 'Test11':
             self.pth_Image = os.path.join(self.pth_Image, 'Test1Data')
             start = 151
@@ -151,15 +151,17 @@ class Cephalometric(data.Dataset):
                         landmark = [int(0.5*(int(landmark1[i]) + int(landmark2[i]))) for i in range(len(landmark1))]
                         landmark_list.append(self.resize_landmark(landmark))
         else:
-            if self.epoch > 0:
-                with open(self.config['base']['runs_dir'] + '/pseudo-labels/epoch_{0}/{1}.json'.format(self.epoch, item['ID']), 'r') as f:
-                    landmark_dict = json.load(f)
-            else:
-                # with open('../cas-qs/pseudo-labels_init{0}/{1}.json'.format(self.pseudo, item['ID']), 'r') as f:
-                #     landmark_dict = json.load(f)
-                with open(tfilename(self.pseudo_config['base']['runs_dir'], f"oneshot_id_{self.pseudo_config['oneshot_id']}", 'pseudo-labels_init', item['ID']+'.json'), 'r') as f:
-                    landmark_dict = json.load(f)
+            # if self.epoch > 0:
+            #     with open(self.config['base']['runs_dir'] + '/pseudo-labels/epoch_{0}/{1}.json'.format(self.epoch, item['ID']), 'r') as f:
+            #         landmark_dict = json.load(f)
+            # else:
+            #     # with open('../cas-qs/pseudo-labels_init{0}/{1}.json'.format(self.pseudo, item['ID']), 'r') as f:
+            #     #     landmark_dict = json.load(f)
+            #     with open(tfilename(self.pseudo_config['base']['runs_dir'], f"oneshot_id_{self.pseudo_config['oneshot_id']}", 'pseudo-labels_init', item['ID']+'.json'), 'r') as f:
+            #         landmark_dict = json.load(f)
 
+            with open(tfilename(self.pseudo_config['base']['runs_dir'], f"oneshot_id_{self.pseudo_config['oneshot_id']}", 'pseudo-labels_init', item['ID']+'.json'), 'r') as f:
+                landmark_dict = json.load(f)
             for key, value in landmark_dict.items():
                 landmark_list.append(value)
 
