@@ -11,12 +11,13 @@ import json
 from PIL import Image
 from pathlib import Path
 
-from models.network import UNet_Pretrained
+#from models.network import UNet_Pretrained
+from models.network_std import UNet_Pretrained
 from datasets.ceph_st import Cephalometric
 from utils.eval import Evaluater
 from utils.utils_st import to_Image, pred_landmarks, visualize, make_dir, voting
 
-from tutils import tdir, tfilename
+from tutils import tdir,trans_init, trans_args, tfilename
 
 def gray_to_PIL(tensor):
     tensor = tensor  * 255
@@ -118,7 +119,7 @@ class Tester(object):
                 assert(epoch is not None)
                 inference_marks = {id:[int(pred_landmark[1][id]), \
                     int(pred_landmark[0][id])] for id in range(19)}
-                dir_pth = tdir(config['training']['runs_dir'] + f'/pseudo-labels/epoch_{epoch+1}')
+                dir_pth = tdir(self.config['training']['runs_dir'] + f'/pseudo-labels/epoch_{epoch+1}')
                 with open('{0}/{1:03d}.json'.format(dir_pth, ID), 'w') as f:
                     json.dump(inference_marks, f)
             
@@ -178,13 +179,15 @@ def heatmap2landmark(heatmap, Radius):
 
 
 if __name__ == "__main__":
-    from tutils import trans_init, trans_args, tfilename
+ 
     # Parse command line options
     parser = argparse.ArgumentParser(description="Train a cgan Xray network")
     parser.add_argument("--tag", default='test', help="position of the output dir")
-    parser.add_argument("--config_file", default="config.yaml", help="default configs")
-    parser.add_argument("--epoch", default=5, help="position of the output dir")
-    args = trans_args(parser)
+    parser.add_argument("--config", default="configs/config_st.yaml", help="default configs")
+    #parser.add_argument("--config_file", default="config_st.yaml", help="default configs")
+    parser.add_argument("--epoch", default=299, help="position of the output dir")
+    #args = trans_args(parser)
+    args = parser.parse_args()
     logger, config = trans_init(args)
 
     # Load model
@@ -199,4 +202,5 @@ if __name__ == "__main__":
     net = torch.nn.DataParallel(net)
 
     tester = Tester(logger, config, net, args.tag, args=args)
-    tester.test(net)
+    tester.test_for_single_net(net)
+    #tester.test(net,epoch=0,dump_label= True)
