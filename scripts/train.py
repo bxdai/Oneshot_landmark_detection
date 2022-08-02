@@ -172,10 +172,14 @@ if __name__ == "__main__":
                 gt_y, gt_x = torch.div(raw_y, (2 ** 5), rounding_mode='trunc'), torch.div(raw_x, (2 ** 5),rounding_mode='trunc')
                 tmpl_y, tmpl_x = torch.div(chosen_y, (2 ** 5),rounding_mode='trunc'), torch.div(chosen_x, (2 ** 5),rounding_mode='trunc')
                 
+                #crop_fea_list[0] =[8,16,6,6]
+                #shape[8,16]
                 tmpl_feature = torch.stack([crop_fea_list[0][[id], :, tmpl_y[id], tmpl_x[id]] \
                                             for id in range(gt_y.shape[0])]).squeeze()
+                #每一层的余弦相似度映射计算
                 ret_inner_5 = match_inner_product(raw_fea_list[0], tmpl_feature)  # shape [8,12,12]
 
+                # CE loss
                 loss_5 = ce_loss(ret_inner_5, gt_y, gt_x)
 
                 gt_y, gt_x = torch.div(raw_y, (2 ** 4),rounding_mode='trunc'), torch.div(raw_x, (2 ** 4),rounding_mode='trunc')

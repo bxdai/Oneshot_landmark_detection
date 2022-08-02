@@ -37,6 +37,7 @@ class Cephalometric(data.Dataset):
         guassian_mask = torch.zeros(2*self.Radius, 2*self.Radius, dtype=torch.float)
         for i in range(2*self.Radius):
             for j in range(2*self.Radius):
+                #默认求l2范数，也就是距离
                 distance = np.linalg.norm([i+1 - self.Radius, j+1 - self.Radius])
                 if distance < self.Radius:
                     mask[i][j] = 1
@@ -193,7 +194,7 @@ class Cephalometric(data.Dataset):
         return len(self.list)
 
 if __name__ == '__main__':
-    test = Cephalometric('../../dataset/Cephalometric', 'Train')
+    test = Cephalometric('../../data/Cephalometric', 'Train')
     for i in range(1):
         test.__getitem__(i)
     print("pass")

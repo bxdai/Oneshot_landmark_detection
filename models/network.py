@@ -32,6 +32,7 @@ class UNet_Pretrained(nn.Module):
         self.trans_1 = nn.Conv2d(128, length_embedding, kernel_size=1, padding=0)
         self.trans_0 = nn.Conv2d(128, length_embedding, kernel_size=1, padding=0)
 
+        #这和论文中的说法不一致，论文中应该是使用NonLocalBlock类
         if non_local:
             self.non_local_5 = RFB_modified(512, 512)
             self.non_local_4 = RFB_modified(256, 256)
@@ -148,6 +149,8 @@ class BasicConv2d(nn.Module):
         x = self.bn(x)
         return x
 
+# RFB-s
+# https://arxiv.org/pdf/1711.07767v3.pdf
 class RFB_modified(nn.Module):
     def __init__(self, in_channel, out_channel):
         super(RFB_modified, self).__init__()

@@ -149,6 +149,7 @@ class Cephalometric(data.Dataset):
         padding = int(pad_scale*self.size[0])
         patch_size = self.patch_size
         # raw_x, raw_y = self.select_point_from_prob_map(self.prob_map, size=self.size)
+        #随机选取一个点
         raw_x = np.random.randint(int(pad_scale * self.size[0]), int((1-pad_scale) * self.size[0]))
         raw_y = np.random.randint(int(pad_scale * self.size[1]), int((1-pad_scale) * self.size[1]))
         # while True:
@@ -163,22 +164,25 @@ class Cephalometric(data.Dataset):
         b1_top = 0
         b1_right = self.size[0] - patch_size
         b1_bot = self.size[1] - patch_size
+
         b2_left = raw_x-patch_size+1
         b2_top = raw_y-patch_size+1
         b2_right = raw_x
         b2_bot = raw_y
+
         b_left = max(b1_left, b2_left)
         b_top  = max(b1_top, b2_top)
         b_right = min(b1_right, b2_right)
         b_bot = min(b1_bot, b2_bot)
+
+        #计算出剪切图的x的起始坐标，y的起始坐标也就是在原图中的margin
         left = np.random.randint(b_left, b_right)
         top = np.random.randint(b_top, b_bot)
-
         margin_x = left
         margin_y = top
         cimg = item['image'][:, margin_y:margin_y + patch_size, margin_x:margin_x + patch_size]
         crop_imgs = augment_patch(cimg, self.aug_transform)
-        chosen_x, chosen_y = raw_x - margin_x, raw_y - margin_y
+        chosen_x, chosen_y = raw_x - margin_x, raw_y - margin_y #其中一种情况这个点是crop图像的右上角
 
         temp = torch.zeros([1, patch_size, patch_size])
         temp[:, chosen_y, chosen_x] = 1
